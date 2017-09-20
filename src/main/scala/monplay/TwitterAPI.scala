@@ -1,12 +1,13 @@
 package monplay
 
-import twitter4j.{Query, Twitter, TwitterFactory}
+import twitter4j.{Query, Status, Twitter, TwitterFactory}
 import twitter4j.auth.AccessToken
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 
 object TwitterAPI {
-  lazy val connection: Twitter = {
+  lazy val connectionSync: Twitter = {
     val ref = TwitterFactory.getSingleton
     ref.setOAuthConsumer(
       "euuAbKrpZ3aktrUZuYr2ZtHV3",
@@ -19,12 +20,8 @@ object TwitterAPI {
     ref
   }
 
-  def sample(): Unit = {
+  def search(query: String): mutable.Buffer[Status] = {
     val query = new Query("@monix")
-    val result = connection.search(query)
-
-    result.getTweets.asScala.foreach(x => {
-      println(s"${x.getUser.getScreenName}: ${x.getText}")
-    })
+    connectionSync.search(query).getTweets.asScala
   }
 }
